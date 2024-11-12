@@ -1,0 +1,10 @@
+Clone ID,Ab Capture (nm1),Binding Response (nm1),KD(M),ka(1/Ms),kd(1/s),R2,Comments,Binding Response (nm1),KD(M),ka(1/Ms),kd(1/s),R2,Comments
+aab-pp489_parental_1,1.04,0.29,9.80E-10,5.35E+05,5.24E-04,0.97,,0,N.B.,N.B.,N.B.,N.B.,
+aab-pp489_alphabind_1502_d4,1.08,0.32,3.89E-10,4.32E+05,1.68E-04,0.97,,0.02,N.B.,N.B.,N.B.,N.B.,
+aab-pp489_parental_2,1.09,0.31,1.25E-09,4.67E+05,5.82E-04,0.97,,0.01,N.B.,N.B.,N.B.,N.B.,
+aab-pp489_alphabind_3750_d7,0.95,0.28,2.16E-10,4.62E+05,? 1.00E-04*,0.98,,0,N.B.,N.B.,N.B.,N.B.,
+aab-pp489_alphabind_5252_d9,1.04,0.3,2.33E-10,4.30E+05,? 1.00E-04*,0.98,,0,N.B.,N.B.,N.B.,N.B.,
+aab-pp489_alphabind_1500_d4,0.74,0.22,2.11E-10,5.65E+05,1.19E-04,0.95,,0.01,N.B.,N.B.,N.B.,N.B.,
+aab-pp489_alphabind_2254_d5,1.1,0.32,5.16E-10,4.08E+05,2.10E-04,0.97,,0.01,N.B.,N.B.,N.B.,N.B.,
+aab-pp489_parental_0,1.08,0.29,1.54E-09,4.78E+05,7.38E-04,0.96,,0.01,N.B.,N.B.,N.B.,N.B.,
+Polyclonal Human IgG,1.24,0,N.B.,N.B.,N.B.,N.B.,,0,N.B.,N.B.,N.B.,N.B.,

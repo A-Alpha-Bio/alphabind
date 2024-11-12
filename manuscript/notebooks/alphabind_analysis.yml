@@ -1,0 +1,13 @@
+name: alphabind_analysis
+channels:
+  - conda-forge
+dependencies:
+  - levenshtein==0.26.0
+  - matplotlib==3.9.2
+  - numpy==2.1.2
+  - pandas==2.2.3
+  - polars==1.10.0
+  - pyarrow==17.0.0
+  - python=3.10
+  - seaborn==0.13.2
+  - ipykernel

@@ -1,5 +1,7 @@
 # AlphaBind
 
+Pre-print available on bioRxiv: [AlphaBind, a Domain-Specific Model to Predict and Optimize Antibody-Antigen Binding Affinity](https://www.biorxiv.org/content/10.1101/2024.11.11.622872v1)
+
 ## Building the AlphaBind Docker container
 
 > [!TIP]

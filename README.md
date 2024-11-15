@@ -12,7 +12,7 @@
 
 #### Obtain a free NVIDIA NGC API key
 
-In order to download the model weights for the ESM-2nv model from NGC, you will need a free NGC account and `API Key`. If you do not already have these, create them by following NVIDIA's [NGC Account and API Key Configuration](https://docs.nvidia.com/bionemo-framework/latest/access-startup.html#ngc-account-and-api-key-configuration) documentation.
+In order to download the model weights for the ESM-2nv model from NGC, you will need a free NGC account and `API Key`. If you do not already have these, create them by following NVIDIA's [NGC Account and API Key Configuration](https://docs.nvidia.com/bionemo-framework/1.10/access-startup.html#ngc-account-and-api-key-configuration) documentation.
 
 #### Configure NGC credentials in the provided `.env` file
 

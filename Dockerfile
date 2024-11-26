@@ -1,3 +1,4 @@
+# syntax=docker.io/docker/dockerfile:1.10
 FROM nvcr.io/nvidia/clara/bionemo-framework:1.10
 WORKDIR /workspace/bionemo
 

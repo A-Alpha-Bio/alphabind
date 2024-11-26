@@ -93,3 +93,6 @@ target/
 /alphabind/examples/data/preprocessed/
 /alphabind/examples/data/models/
 /alphabind/examples/data/results/
+
+# Ignore suggested secrets file name
+ngc_secrets.env

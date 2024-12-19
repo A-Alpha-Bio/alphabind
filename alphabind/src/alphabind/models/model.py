@@ -142,7 +142,10 @@ class TxRegressor(nn.Module):
 
 class TxRegressorLabelEncoded(nn.Module):
     """
-    Transformer model with an embedding layer attached to it
+    Transformer model with a binding affinity regression head.
+
+    Note: This module is used to study ablated models and not required for the AlphaBind
+    model
 
     Parameters:
         heads (int): Number of transformer heads in the TxRegressor
@@ -188,7 +191,14 @@ class TxRegressorLabelEncoded(nn.Module):
 
 
 class EnsembleTxRegressorLabelEncoded(nn.Module):
-    """ """
+    """
+    Ensemble wrapper for a set of models.
+
+    Note: This module is used to study ablated models and not required for the AlphaBind
+
+    Parameters:
+        modules (list[TxRegressorLabelEncoded]): list of models to be used in the ensemble
+    """
 
     def __init__(self, modules: list[TxRegressorLabelEncoded]):
         super().__init__()

@@ -46,9 +46,9 @@ class YMDataset(Dataset):
     last column is left empty. In the delimiter column, all the columns except 2560 are 0 and a 1 is added to this position (129,2560 in above example)
 
     Parameters:
-        df (pd.DataFrame): pandas dataframe with columns - embedding_a_location, embedding_alpha_location, Kd. The columns here are as follows:
-                           embedding_a_location (os.PathLike): path to the embeddings (usually produced by esm) of sequence_a and saved in a npy format
-                           embedding_alpha_location (os.PathLike): path to the embeddings (usually produced by esm) of sequence_alpha and saved in a npy format
+        df (pd.DataFrame): pandas dataframe with columns - embedding_location_a, embedding_location_alpha, Kd. The columns here are as follows:
+                           embedding_location_a (os.PathLike): path to the embeddings (usually produced by esm) of sequence_a and saved in a npy format
+                           embedding_location_alpha (os.PathLike): path to the embeddings (usually produced by esm) of sequence_alpha and saved in a npy format
                            Kd (float): binding affinity between sequence_a and sequence_alpha
         embedded_sequence_length (int): Embedding length produced by this Dataset. The embeddings are filled within this frame. PPIs whose len(sequence_a) + len(sequence_alpha)
                                         exceeds embedded_sequence_length are dropped
@@ -119,7 +119,27 @@ class YMDataset(Dataset):
 
 
 class LabelEncodingDataset(Dataset):
-    """ """
+    """
+    Pytorch dataset used for one-hot-encoded models. This dataset takes in sequence_a and sequence_alpha in a pandas dataframe and featurizes every amino
+    acid in the sequence into one hot vectors.
+
+    Note: This dataset was used to study ablated models and is not required for the AlphaBind model.
+
+    Parameters:
+        df (pd.DataFrame): pandas dataframe with columns - sequence_a, sequence_alpha and Kd. The columns here are as follows:
+                           sequence_a (str): amino acid sequence of protein to optimize
+                           sequence_alpha (str): amino acid sequence of target protein
+                           Kd (float): binding affinity between sequence_a and sequence_alpha
+        embedded_sequence_length: length required for output embedding. If the sequence is shorter than the embedding length, a padding mask can be used during
+                                  training
+
+    Returns:
+        dictionary of arrays with following keys:
+            embedding: The embedding array as described above
+            padding_mask: Mask array for the ppi sequence. This mask is False for rows where we have filled in embeddings and delimiter. The rest of the mask is True.\
+                          len(mask) = embedding.shape(dim=0)
+            kd: binding affinity for the data sample obtained from input df.
+    """
 
     def __init__(self, df: pd.DataFrame, embedded_sequence_length: int = 600):
         # TODO: Add warning to let user know what number of sequences were filtered out because of length
@@ -197,8 +217,10 @@ class YMDataModule(L.LightningDataModule):
     DataModule to load yeast mating datasets as Pytorch Lightning Datamodules
 
     Parameters:
-        data_csv_path: df to be used in YMDataset
+        data_csv_path: df to be used in dataset_class
+        dataset_class: type of pytorch dataset to produce. The parameter accepts classes of type torch.utils.data.Dataset
         batch_size: batch_size to use for dataloaders
+        seed: random seed used for train-val splits. Defaults to 42 (arbitrary).
     """
 
     def __init__(

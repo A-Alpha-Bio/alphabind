@@ -53,14 +53,14 @@ def load_bionemo_inferer(
 
 
 def get_embedding_using_inferer(
-    sequences: Sequence[str], bionemo_inferer
+    sequences: Sequence[str], bionemo_inferer=None
 ) -> dict[str, Tensor]:
     """
     Given a batch of sequences and a bionemo inferer (as provided by load_bionemo_inferer), this function runs inference and returns embeddings
 
     Parameters:
         sequences: Protein sequences in amino acid notation to be passed through the model to generate embeddings
-        bionemo_inferer: [Fill]
+        bionemo_inferer: Bionemo model's inference object returned by bionemo.triton.utils.load_model_for_inference
 
     Returns:
         dict where the sequences passed above are the keys and their corresponding embeddings are the values
@@ -89,8 +89,20 @@ def featurize_using_esm2nv(
     batch_size: int = 16,
     upper_limit_len: int = 450,
     bionemo_inferer=None,
-):
-    """ """
+) -> dict[str, os.PathLike]:
+    """
+    Given a batch of sequences, a folder path, and a bionemo inferer, get embeddings and store them as npy files in the folder
+
+    Parameters:
+        sequences: Protein sequences in amino acid notation to be passed through the model to generate embeddings
+        embedding_dir_path: folder path to store the embedding npy files in
+        batch_size: batch_size used during inferencing. This is defaulted to 16 for V100 but can be larger for larger GPUs
+        upper_limit_len: Maximum sequence length allowed. Filter out sequences that have a length higher than this
+        bionemo_inferer: Bionemo model's inference object returned by bionemo.triton.utils.load_model_for_inference
+
+    Returns:
+        dict where the sequences passed above are the keys and their corresponding embedding file paths are the values
+    """
 
     seqs = [seq for seq in sequences if len(seq) < upper_limit_len]
 
@@ -116,8 +128,21 @@ def featurize_ppis_using_esm(
     batch_size: int = 16,
     key_file_name: str | os.PathLike = "sequence_key.json",
     bionemo_inferer=None,
-):
-    """ """
+) -> pd.DataFrame:
+    """
+    Given a pandas dataframe of protein pairs (sequence_a and sequence_alpha), compute embeddings of all unique protein sequences
+    and return a dataframe with paths to the computed embeddings
+
+    Parameters:
+        ppi_df: Pandas datafame with sequence_a and sequence_alpha
+        embedding_dir_path: folder path to store the embedding npy files in
+        batch_size: batch_size used during inferencing. This is defaulted to 16 for V100 but can be larger for larger GPUs
+        key_file_name: filename to save sequence to embeddings mapping in
+        bionemo_inferer: Bionemo model's inference object returned by bionemo.triton.utils.load_model_for_inference
+
+    Returns:
+        dict where the sequences passed above are the keys and their corresponding embedding file paths are the values
+    """
 
     sequence_a_mapping = featurize_using_esm2nv(
         set(ppi_df.sequence_a),

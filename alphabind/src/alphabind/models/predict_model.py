@@ -50,8 +50,23 @@ def _featurize_using_esm2nv(
     seq_a_batch: list[str],
     seq_alpha_batch: list[str],
     bionemo_inferer,
-    input_device=torch.device("cuda:0"),
+    input_device: torch.device = torch.device("cuda:0"),
 ):
+    """
+    Given a batch of sequence_a and sequence_alpha, along with bionemo inferer, this function returns a batch of embeddings
+    needed for training. These embeddingsa are computed using esm2nv
+
+    Parameters:
+        seq_a_batch (list[str]): batch of sequence_a
+        seq_alpha_batch (list[str]): batch of sequence_alpha
+        bionemo_inferer: Bionemo model's inference object returned by bionemo.triton.utils.load_model_for_inference
+        input_device (torch.device): torch device to run bionemo inference on
+
+    Returns:
+        tuple containing the embeddings and padding.
+            embeddings: embedding tensor of containing esm2nv embeddings of sequence_a and sequence_alpha as described in ./dataset.py
+            padding: paddning to be used with the embeddings tensor
+    """
     if len(seq_a_batch) != len(seq_alpha_batch):
         raise ValueError(
             f"lengths of seq_batch and seq_alpha_batch should match. Found seq_a: {len(seq_a_batch)}, seq_alpha: {len(seq_alpha_batch)}"
@@ -88,6 +103,21 @@ def _featurize_using_label_encoding(
     input_device: torch.device = torch.device("cuda:0"),
     embedded_sequence_length: int = 600,
 ):
+    """
+    Given a batch of sequence_a and sequence_alpha, along with bionemo inferer, this function returns a batch of embeddings
+    needed for training. These embeddings are one hot encoded versions of the sequence
+
+    Parameters:
+        seq_a_batch (list[str]): batch of sequence_a
+        seq_alpha_batch (list[str]): batch of sequence_alpha
+        input_device (torch.device): torch device to run bionemo inference on
+        embedded_sequence_length (int): Size of sequence dimension in returned `embeddings` tensor.
+
+    Returns:
+        tuple containing the embeddings and padding.
+            embeddings: embedding tensor of containing label encoded embeddings of sequence_a and sequence_alpha as described in ./dataset.py
+            padding: paddning to be used with the embeddings tensor
+    """
     if len(seq_a_batch) != len(seq_alpha_batch):
         raise ValueError(
             f"lengths of seq_batch and seq_alpha_batch should match. Found seq_a: {len(seq_a_batch)}, seq_alpha: {len(seq_alpha_batch)}"
@@ -130,10 +160,25 @@ def predict_using_alphabind(
     | TxRegressorLabelEncoded
     | EnsembleTxRegressorLabelEncoded,
     bionemo_inferer=None,
-    batch_size=16,
-    input_device=torch.device("cuda:0"),
-    output_device=torch.device("cpu"),
-):
+    batch_size: int = 16,
+    input_device: torch.device = torch.device("cuda:0"),
+    output_device: torch.device = torch.device("cpu"),
+) -> list[float]:
+    """
+    Given a batch sequence_a and sequence_alpha, predict Kd scores for each ppi pair.
+
+    Parameters:
+        sequence_a (list[str]): batch of sequence_a
+        sequence_alpha (list[str]): batch of sequence_alpha
+        alphabind_model (TxRegressorForESMEmbedding | TxRegressorLabelEncoded | EnsembleTxRegressorLabelEncoded): Pytorch alphabind model. This
+                                                                                                                  parameter allows for ablated models
+        bionemo_inferer: Bionemo model's inference object returned by bionemo.triton.utils.load_model_for_inference
+        batch_size (int): batch_size used during inferencing. This is defaulted to 16 for V100 but can be larger for larger GPUs
+        input_device (torch.device): torch device to run bionemo inference on
+
+    Returns:
+        Kd estimates using AlphaBind model
+    """
     if bionemo_inferer is None and isinstance(
         alphabind_model, TxRegressorForESMEmbedding
     ):
@@ -179,6 +224,12 @@ def predict_using_alphabind(
 
 
 def predict_using_alphabind_df_wrapper(ppi_df: pd.DataFrame, **kwargs):
+    """
+    Wrapper function to run AlphaBind predictions given a pandas dataframe of sequence_a and sequence_alpha
+
+    Parameters:
+        ppi_df (pd.DataFrame): A pandas dataframe with columns sequence_a and sequence_alpha containing protein sequences
+    """
     sequence_a = list(ppi_df.sequence_a)
     sequence_alpha = list(ppi_df.sequence_alpha)
 
@@ -197,6 +248,15 @@ def predict(
     output_dataset_path: str | os.PathLike,
     trained_model_path: str | os.PathLike,
 ):
+    """
+    Wrapper function to run AlphaBind predictions given a pandas dataframe of sequence_a and sequence_alpha
+
+    Parameters:
+        ppi_dataset_path (str | os.PathLike): Path to ppi csv file containing sequence_a and sequence_alpha
+        output_dataset_path (str | os.PathLike): Path to store the output csv file at
+        trained_model_path (str | os.PathLike): Finetuned AlphaBind checkpoint path. Note: This function will accept original (non-finetuned)
+                                                AlphaBind model but the intended use case is to finetune it on relevant data.
+    """
     ppi_dataset = pd.read_csv(ppi_dataset_path)
     model = torch.load(trained_model_path, map_location=torch.device("cpu"))
 

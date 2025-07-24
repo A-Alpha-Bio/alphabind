@@ -2,6 +2,14 @@
 FROM nvcr.io/nvidia/clara/bionemo-framework:1.10
 WORKDIR /workspace/bionemo
 
+RUN wget --content-disposition https://api.ngc.nvidia.com/v2/resources/nvidia/ngc-apps/ngc_cli/versions/3.160.1/files/ngccli_linux.zip -O ngccli_linux.zip && \
+    unzip ngccli_linux.zip && \
+    chmod u+x ngc-cli/ngc
+
+# Add ngc-cli to the PATH
+ENV PATH="${PATH}:/workspace/bionemo/ngc-cli"
+RUN which ngc && ngc --version
+
 # `NGC_CLI_TEAM` needs to be defined, but can typically be left empty for most use-cases.
 ARG NGC_CLI_TEAM=
 # Download the ESM-2nv, 3B parameter model.
